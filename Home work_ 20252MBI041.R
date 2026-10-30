@@ -79,3 +79,55 @@ head(performance2, 10)
 # Count pass and fail
 table(performance2$Decision)
 
+
+
+## Importing data from my online data
+
+
+
+
+# Load the package
+library(jsonlite)
+
+# Import sales data from GitHub
+
+sales.data <- fromJSON(
+  "https://raw.githubusercontent.com/Kundan-Rwanda/sample-sales-data/refs/heads/main/sales.json",
+  flatten = TRUE
+)
+
+# Display the data
+View(sales.data)
+
+
+
+# Display 5 frist row of dataset
+head(sales.data, 5)
+
+
+# Importing data from my Database
+library(DBI) #Provides common database functions
+library(RMariaDB) # this help to transfer data from  database into R for data science.
+library(rstudioapi) #Interacts with the RStudio application, including password prompts
+con <- dbConnect(
+  RMariaDB::MariaDB(),
+  host = "127.0.0.1",
+  port = 3306,
+  username = "root",
+  password = askForPassword("MySQL password"),
+  dbname = "university_db"
+)
+
+dbListTables(con)
+
+# display date form database
+
+students <- DBI::dbGetQuery(
+  con,
+  "SELECT * FROM Students"
+)
+
+print(students)
+
+
+
