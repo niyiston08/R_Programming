@@ -47,3 +47,35 @@ performance1 <- data.frame(
 )
 
 print(performance1)
+
+
+# Create a new dataset from the original student data
+performance2 <- performance
+
+# Identify the subject columns
+subjects <- c(
+  "Mathematics",
+  "English",
+  "Biology",
+  "Computer_Studies"
+)
+
+# Calculate each student's average mark
+performance2$Total_Average <- rowMeans(
+  performance2[, subjects, drop = FALSE],
+  na.rm = TRUE
+)
+
+# Assign Pass or Fail
+performance2$Decision <- ifelse(
+  performance2$Total_Average >= 60,
+  "Pass",
+  "Fail"
+)
+
+# Display the new dataset
+head(performance2, 10)
+
+# Count pass and fail
+table(performance2$Decision)
+
