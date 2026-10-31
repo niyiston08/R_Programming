@@ -97,7 +97,6 @@ head(performance2, 10)
 # Count pass and fail
 table(performance2$Decision)
 
-
 ```
 
 
