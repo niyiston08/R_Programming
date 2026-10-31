@@ -115,7 +115,7 @@ sales.data <- fromJSON(
 )
 
 # Display the data
-print(sales.data)
+View(sales.data)
 
 
 
@@ -169,7 +169,7 @@ Students1 <- DBI::dbGetQuery(
   "SELECT * FROM Students LIMIT 3"
 )
 
-print(Students1)
+View(Students1)
 ```
 
 
