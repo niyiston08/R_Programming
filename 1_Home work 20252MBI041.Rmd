@@ -101,14 +101,9 @@ table(performance2$Decision)
 ```
 
 
-
-
-
-
 ## Importing data from my online data
 
-
-
+```{r}
 
 # Load the package
 library(jsonlite)
@@ -128,7 +123,10 @@ View(sales.data)
 # Display 5 frist row of dataset
 head(sales.data, 5)
 
+
 ```
+
+
 ```{r, echo=FALSE}
 
 
@@ -154,53 +152,26 @@ con <- dbConnect(
 
 dbListTables(con)
 
-# display date form database
+# display data form database
 
-students <- DBI::dbGetQuery(
+students_list <- DBI::dbGetQuery(
   con,
   "SELECT * FROM Students"
 )
 
-print(students)
+print(students_list)
 
 ```
 
 
 ```{r, echo=FALSE}
-Students <- DBI::dbGetQuery(
+Students1 <- DBI::dbGetQuery(
   con,
   "SELECT * FROM Students LIMIT 3"
 )
 
-print(Students)
-
+View(Students1)
 ```
-```{r}
-data("iris")
-print(iris)
-str(iris)
-
-
-```
-```{r}
-
-data("UCBAdmissions")
-```
-
-
-```{r}
-
-dob<-as.Date("1989-04-26")
-today<-as.Date("2026-10-25")
-difftime(today, dob, unit="days")
-
-startdate <- as.Date("2011-02-13")
-enddate <- as.Date("2024-01-22")
-days <- as.numeric(enddate- startdate)
-days
-
-```
-
 
 
 
