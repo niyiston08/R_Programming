@@ -164,6 +164,8 @@ students <- DBI::dbGetQuery(
 print(students)
 
 ```
+
+
 ```{r, echo=FALSE}
 Students <- DBI::dbGetQuery(
   con,
