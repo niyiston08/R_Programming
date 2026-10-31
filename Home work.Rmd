@@ -139,7 +139,7 @@ tail(sales.data, 5)
 
 # Importing data from my Database
 ```{r, echo=FALSE}
-
+# Importing data from my Database
 library(DBI) #Provides common database functions
 library(RMariaDB) # this help to transfer data from  database into R for data science.
 library(rstudioapi) #Interacts with the RStudio application, including password prompts
