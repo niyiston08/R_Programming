@@ -1,0 +1,186 @@
+---
+title: "Class activities"
+author: "Fiston Niyigena"
+date: '`r Sys.Date()`'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+## Control structures
+#### grouping
+
+### ifelse(test,yes,No)
+
+```{r}
+pvalues<-c(0.867,0.0054,0.0018,0.1572,0.0183,0.5386)
+results<-ifelse(pvalues<0.05,"Significant","Not significant")
+results
+
+data2<-data.frame(pvalues,results)
+
+View(data2)
+
+```
+
+
+
+
+```{r}
+
+x<-runif(1,0,10)
+if(x>3){
+  print("x is greater than tree")
+  
+} else {
+  
+  print("x is less or equal than three")}
+
+```
+
+```{r}
+y<- if (x>3){10}else{0}
+
+```
+##for
+
+```{r}
+for (i in 1:10) {
+  print(x[i])
+  
+}
+```
+## While: testing a condition , if it is true the they 
+
+```{r}
+
+count<-1
+while(count<10)
+{print(count)
+  count<-count}
+```
+
+```{r}
+z< -5
+set.seed(1)
+while(z>=3 && z<=5){
+  coin<-rbinom(1,1,0.5)
+  if (coin==1){
+    z=z+1
+  } else {
+    z<-z-1
+  }
+}
+
+
+```
+
+
+```{r}
+y<- rnorm(100)
+View(y)
+hist(y)
+mean(y)
+
+```
+
+
+```{r}
+# Create student dataset
+
+students <- data.frame(
+  Student_ID = 1:6,
+  Name = c("John", "Mary", "Peter",
+           "Alice", "David", "Grace"),
+  Marks = c(85, 45, 67, 30, 90, 55)
+)
+
+# Display dataset
+print(students)
+
+
+marks <- 75
+
+if (marks >= 60) {
+  print("PASS")
+}
+
+
+marks <- 45
+
+if (marks >= 60) {
+  print("PASS")
+} else {
+  print("FAIL")
+}
+
+
+
+students$Decision <- ifelse(
+  students$Marks >= 60,
+  "PASS",
+  "FAIL"
+)
+
+print(students)
+
+
+
+
+
+for (i in 1:nrow(students)) {
+
+  if (students$Marks[i] >= 60) {
+
+    print(paste(
+      students$Name[i],
+      "Passed"
+    ))
+
+  } else {
+
+    print(paste(
+      students$Name[i],
+      "Failed"
+    ))
+  }
+}
+
+
+
+i <- 1
+
+while (i <= nrow(students)) {
+
+  print(students$Name[i])
+
+  i <- i + 1
+}
+```
+
+
+
+
+
+
+```{r}
+str(Titanic)
+View(Titanic)
+head(Titanic,1)
+```
+
+
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
