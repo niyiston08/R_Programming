@@ -1,20 +1,310 @@
 ---
-title: "Home work"
-author: "Fiston Niyigena"
+title: 'Practice Home prictice'
+author: "Fistin Niyigena"
 date: "`r Sys.Date()`"
 output:
-  html_document: default
-  pdf_document: default
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    df_print: paged
+  pdf_document:
+    toc: true
 ---
-
-## HW1: Import data from statistical package and from database management system
-
 
 
 ```{r setup, include=FALSE}
-# for removing hash tag in the table before number
-knitr::opts_chunk$set(comment = NA)
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE,
+                      fig.width = 7, fig.height = 4.5)
 ```
+
+# Load packages
+
+```{r packages}
+# install.packages("tidyverse")   # once only
+library(tidyverse)   # dplyr, tidyr, ggplot2, readr, purrr, stringr, forcats, lubridate
+```
+
+
+# 1. Introduction to R
+
+R is a programming language and software environment used for statistical computing, data analysis, and data visualization.
+```{r calculator}
+# Basic calculations
+20 + 10
+50 - 8
+30 * 20
+90 / 3
+6^4
+```
+
+# 2. Data structures in R
+
+## 2.1 Vectors
+
+A vector stores values of the same basic type.
+
+```{r vectors}
+# Numeric vector
+study_hours <- c(2.5, 3, 4, 1.5, 5)
+summary(study_hours)
+
+# Calculate the average study time
+mean(study_hours)
+
+# Logical vector
+passed <- c(TRUE, TRUE, FALSE, TRUE)
+
+# Character vector
+students <- c("Fiston", "Aloys", "Ange", "Mwizerwa")
+
+# Integer vector
+days <- 1:7
+
+# Complex vector
+complex_values <- c(4 + 2i, 3 + 2i)
+
+# Check the type of a vector
+class(complex_values)
+```
+
+## 2.2 Matrices
+
+A matrix stores data in rows and columns. All its values should have the same basic type.
+
+```{r matrices}
+# Create a matrix with 2 rows and 3 columns
+
+x <- matrix(1:6, nrow = 2, ncol = 3)
+x
+
+# Create another matrix
+
+y <- matrix(1:6, nrow = 6, ncol = 4)
+y
+
+# Multiply the two matrices
+x %*% y
+```
+
+## 2.3 Lists
+
+A list can store different types of values together.
+
+```{r lists}
+# Create a list with different types of information
+student_info <- list(
+  name = "Fiston",
+  age = 25,
+  registered = TRUE,
+  score = 80 + 2i
+)
+
+student_info
+
+# Access the student's name
+student_info[[1]]
+```
+
+## 2.4 Factors
+
+A factor is used to represent categories.
+
+```{r factors}
+# Record whether students completed an assignment
+assignment_status <- factor(
+  c("Completed", "Completed", "Not completed", "Completed", "Not completed")
+)
+
+assignment_status
+levels(assignment_status)
+```
+
+## 2.5 Missing values
+
+R uses `NA` to represent missing information.
+
+```{r missing-values}
+# Create a vector with one missing value
+scores <- c(60, 84, NA, 85, 78)
+
+# Identify the missing value
+is.na(scores)
+
+# Remove missing values when calculating the average
+mean(scores, na.rm = TRUE)
+```
+
+```{r complete-cases}
+# Check which rows have complete information
+height <- c(160, 155, NA, 140, 185)
+weight <- c(68, 58, 70, NA, 70)
+
+complete.cases(height, weight)
+```
+
+## 2.6 Coercion
+
+R converts values to a common type when different types are combined in one vector.
+
+```{r coercion}
+# Numbers become characters when text is included
+mixed_values <- c(40, 30, "Ten")
+mixed_values
+
+# TRUE is counted as 1 and FALSE as 0
+sum(c(TRUE, TRUE, FALSE, TRUE))
+```
+
+
+# Data importation
+
+HW1: Import data from a statistical package (SAS, SPSS, Stata) and from a database (SQL, MySQL, Oracle, Access).
+
+
+
+# PART 1: IMPORT DATA FROM BUILT-IN STATISTICAL DATASETS
+
+# 1. Load built-in datasets
+library(datasets)
+
+# 2. Import iris dataset
+data(iris)
+
+# 3. View the dataset
+View(iris)
+
+# 4. Display first 10 observations
+head(iris, 10)
+
+# 5. Display dataset structure
+str(iris)
+
+# 6. Summary statistics
+summary(iris)
+
+# 7. Number of rows and columns
+nrow(iris)
+ncol(iris)
+
+# 8. Average sepal length
+mean(iris$Sepal.Length)
+
+# 9. Average sepal width
+mean(iris$Sepal.Width)
+
+
+# PART 2: IMPORT DATA FROM AN EXTERNAL STATISTICAL PACKAGE
+
+# 1. Install package (run only when not installed)
+if (!requireNamespace("nycflights13", quietly = TRUE)) {
+  install.packages("nycflights13")
+}
+
+# 2. Load package
+library(nycflights13)
+
+# 3. Import flights dataset
+data("flights", package = "nycflights13")
+
+# 4. View dataset
+View(flights)
+
+# 5. Display first 15 observations
+head(flights, 15)
+
+# 6. Display structure
+str(flights)
+
+# 7. Summary statistics
+summary(flights)
+
+# 8. Number of observations
+nrow(flights)
+
+# 9. Number of variables
+ncol(flights)
+
+# 10. Calculate average arrival delay
+mean(flights$arr_delay, na.rm = TRUE)
+
+
+# Importing data from my Database
+```{r, echo=FALSE}
+# Importing data from my Database
+library(DBI) #Provides common database functions
+library(RMariaDB) # this help to transfer data from  database into R for data science.
+library(rstudioapi) #Interacts with the RStudio application, including password prompts
+con <- dbConnect(
+  RMariaDB::MariaDB(),
+  host = "127.0.0.1",
+  port = 3306,
+  username = "root",
+  password = askForPassword("MySQL password"),
+  dbname = "university_db"
+)
+
+dbListTables(con)
+
+# display data form database
+
+students_list <- DBI::dbGetQuery(
+  con,
+  "SELECT * FROM Students"
+)
+
+print(students_list)
+
+```
+
+
+
+
+```{r, echo=FALSE}
+Students1 <- DBI::dbGetQuery(
+  con,
+  "SELECT * FROM Students LIMIT 3"
+)
+
+View(Students1)
+
+```
+## Importing data from my online data
+
+```{r}
+
+# Load the package
+library(jsonlite)
+
+# Import sales data from GitHub
+
+sales.data <- fromJSON(
+  "https://raw.githubusercontent.com/Kundan-Rwanda/sample-sales-data/refs/heads/main/sales.json",
+  flatten = TRUE
+)
+
+# Display the data
+View(sales.data)
+
+
+
+# Display 5 frist row of dataset
+head(sales.data, 5)
+
+
+```
+
+
+```{r, echo=FALSE}
+
+
+# Display 5 last row  of dataset
+tail(sales.data, 5)
+
+```
+
+
+
 
 
 # Importing data from my date set on computer
@@ -100,78 +390,684 @@ table(performance2$Decision)
 ```
 
 
-## Importing data from my online data
+
+# Install packages (run once)
+install.packages(c("readr", "dplyr", "janitor", "DBI", "RMariaDB"))
+
+# Load packages
+library(readr)
+library(dplyr)
+library(janitor)
+library(DBI)
+library(RMariaDB)
+install.packages("nycflights13")
+library(nycflights13)
+library(nycflights13)
+install.packages("tidyverse")
+
+getwd()
+
+library(readr)
+
+ecommerce_sales_raw <- read_csv(
+  "ecommerce_sales_raw.csv",
+  show_col_types = FALSE
+)
+
+View(ecommerce_sales_raw)
+
+# Install package
+install.packages("haven")
+ 
+# Load package
+library(haven)
+
+# Import SPSS file
+survey <- read_sav("survey.sav")
+
+# View dataset
+View(survey)
 
 ```{r}
+data_class <- data.frame(
+  HEIGHT = c(161,155,158,170,160,156,162,158,158,167,160,155,154,155,157,
+             157,160,158,160,160,152,154,150,161,162,164,161,155,159,163,
+             159,160,158,165,156,163,155,164,163,168,157,164,154),
+  WEIGHT = c(50,49,42,65,60,52,58,46,45,51,60,42,53,48,48,
+             48,53,52,51,53,44,56,63,52,57,49,52,54,46,50,
+             61,55,45,63,60,56,52,47,52,55,48,58,55)
+)
+```
 
-# Load the package
-library(jsonlite)
+```{r}
+variable.names(data_class)
+head(data_class)
+tail(data_class)
+data_class[10:20, ]
+summary(data_class$WEIGHT)
+length(data_class$WEIGHT)
+data_class[, -1]
+data_class$WEIGHT
+```
 
-# Import sales data from GitHub
+## Built-in datasets
 
-sales.data <- fromJSON(
-  "https://raw.githubusercontent.com/Kundan-Rwanda/sample-sales-data/refs/heads/main/sales.json",
-  flatten = TRUE
+```{r}
+# data()   # list of available datasets
+data("airquality")
+variable.names(airquality)
+str(airquality)
+```
+
+# Exploratory data analysis
+
+```{r}
+data_class
+summary(data_class)
+str(data_class)
+```
+
+## Summary statistics
+
+```{r}
+apply(data_class, 1, mean)
+apply(data_class, 2, sd)
+c(mean(data_class$HEIGHT), sd(data_class$HEIGHT))
+c(mean(data_class$WEIGHT), sd(data_class$WEIGHT))
+c(Mean = mean(data_class$HEIGHT), SD = sd(data_class$HEIGHT))
+c(Mean = mean(data_class$WEIGHT), SD = sd(data_class$WEIGHT))
+```
+
+# Categorical vs continuous variable
+
+```{r}
+data("iris")
+head(iris)
+mean(iris$Petal.Length)
+mean(iris$Petal.Length[iris$Species == "setosa"])
+mean(iris$Petal.Length[iris$Species == "versicolor"])
+mean(iris$Petal.Length[iris$Species == "virginica"])
+
+# shortcut
+by(iris$Petal.Length, iris$Species, mean)
+by(iris$Petal.Length, iris$Species, sd)
+by(iris$Petal.Length, iris$Species, summary)
+```
+
+## Box-and-whisker plot
+
+```{r}
+boxplot(iris$Sepal.Length ~ iris$Species, data = iris,
+        main = "Comparison of categorical vs quantitative")
+```
+
+# Two categorical variables
+
+```{r}
+ucba <- data.frame(UCBAdmissions)
+head(ucba)
+(cross <- xtabs(Freq ~ Gender + Admit, data = ucba))
+
+# Is there gender bias in UCB graduate admission?
+prop.table(cross, 1)
+```
+
+## Simpson's paradox
+
+A trend in the combined data disappears or reverses when the data are split into groups.
+
+```{r}
+cross2 <- xtabs(Freq ~ Gender + Admit, data = ucba[ucba$Dept == "F", ])
+prop.table(cross2, 1)
+```
+
+# Bar chart
+
+```{r}
+dat <- read.table(text = "ProdA ProdB ProdC ProdD
+1 110 50 60 70
+2 120 50 80 65", header = TRUE)
+barplot(as.matrix(dat), beside = TRUE, col = c("Red", "green"))
+
+dat <- read.table(text = "A   B   C   D   E   F    G
+1 10 80 30 90 70 60  90
+2 20 50 70 50 40 10  40
+3 60 80 80 60  60 30 160
+4 20 40 70 80 20 10  70", header = TRUE)
+barplot(as.matrix(dat))
+```
+
+# Scatter plot
+
+```{r}
+plot(WEIGHT ~ HEIGHT, data = data_class)
+plot(data_class$HEIGHT, data_class$WEIGHT)
+plot(data_class[, 1], data_class[, 2], main = "Graph")
+cor(data_class$HEIGHT, data_class$WEIGHT)
+```
+
+# Linear models
+
+```{r}
+plot(WEIGHT ~ HEIGHT, data = data_class)
+abline(lm(WEIGHT ~ HEIGHT, data = data_class)$coefficients)
+
+data_lm <- lm(HEIGHT ~ WEIGHT, data = data_class)
+summary(data_lm)
+
+par(mfrow = c(2, 2))
+plot(data_lm)
+par(mfrow = c(1, 1))
+
+hist(data_class$HEIGHT)
+hist(data_class$WEIGHT, col = "blue")
+```
+
+## Linear with another line (lowess)
+
+```{r}
+plot(WEIGHT ~ HEIGHT, data = data_class)
+abline(lm(WEIGHT ~ HEIGHT, data = data_class)$coefficients)
+lines(lowess(data_class$HEIGHT, data_class$WEIGHT), col = "blue")
+
+cor(data_class$HEIGHT, data_class$WEIGHT)
+lm(WEIGHT ~ HEIGHT, data = data_class)
+```
+
+# Data management
+
+## Create another variable (BMI)
+
+```{r}
+BMI <- with(data_class, WEIGHT / (HEIGHT / 100)^2)
+BMI
+BMI <- round(BMI, 2)
+BMI
+
+head(cbind(data_class, BMI), n = 5)
+new_data_class <- cbind(data_class, BMI)
+tail(new_data_class, n = 10)
+
+summary(BMI)
+stem(BMI, scale = 2)
+```
+
+## Date
+
+```{r}
+today <- Sys.Date()
+format(today, format = "%B %d %Y")
+format(today, format = "%A")
+
+dob <- as.Date("1982-02-10")
+difftime(today, dob, units = "days")
+
+startdate <- as.Date("2004-02-13")
+enddate   <- as.Date("2011-01-22")
+enddate - startdate
+```
+
+# Subsetting: `$`, `[]`, `[[]]`
+
+Leadership data: how do men and women differ in the way they lead?
+Answers: 1 = strongly disagree ... 5 = strongly agree. In `age`, 99 means missing.
+
+```{r}
+manager <- c(1, 2, 3, 4, 5)
+country <- c("US", "US", "UK", "UK", "UK")
+gender  <- c("M", "F", "F", "M", "F")
+age     <- c(32, 45, 25, 39, 99)
+q1 <- c(5, 3, 3, 3, 2)
+q2 <- c(4, 5, 5, 3, 2)
+q3 <- c(5, 2, 5, 4, 1)
+q4 <- c(5, 5, 5, NA, 2)
+q5 <- c(5, 5, 2, NA, 1)
+
+leadership <- data.frame(manager, country, gender, age, q1, q2, q3, q4, q5)
+str(leadership)
+names(leadership)
+```
+
+## Missing values and age categories
+
+```{r}
+leadership$age[leadership$age == 99] <- NA
+# View(leadership)
+
+leadership$agecat[leadership$age > 75] <- "Elder"
+leadership$agecat[leadership$age >= 35 & leadership$age <= 75] <- "Middle Aged"
+leadership$agecat[leadership$age < 35] <- "Young"
+leadership
+```
+
+## Handling missing values: listwise deletion
+
+```{r}
+is.na(leadership[, 5:9])
+newdata <- na.omit(leadership)
+newdata
+```
+
+## Sorting
+
+```{r}
+order(leadership$age)
+newdata2 <- leadership[order(leadership$age), ]
+newdata2
+```
+
+## Merging data sets
+
+```{r, eval=FALSE}
+# Horizontally (by a common key):
+# merge(dataframeA, dataframeB, by = "ID")
+# merge(dataframeA, dataframeB, by = c("ID", "country"))
+
+# Vertically (same variables in both):
+# rbind(dataframeA, dataframeB)
+```
+
+## Subset: select / drop variables and observations
+
+```{r}
+newdata3 <- leadership[, c(5:9)]
+myvars <- c("q1", "q2", "q3", "q4", "q5")
+(newdata3 <- leadership[myvars])
+
+newdata4 <- leadership[, c(-1, -2)]
+(newdata4 <- leadership[, -(1:5)])
+
+newdata5 <- leadership[, c(-1, -7)]
+leadership[[4]]
+leadership$age
+
+newdata6 <- leadership[c(-1, -3), ]
+newdata6 <- leadership[c(2, 4, 5), ]
+
+newdata7 <- subset(leadership, age >= 35 | age < 24, select = c(q1, q2, q3, q4, q5))
+newdata7
+
+# Men older than 30
+(newdata7 <- leadership[leadership$gender == "M" & leadership$age > 30, ])
+```
+# Dataset
+
+30 rows, with a few `NA` values for practice.
+
+```{r data}
+install.packages("tibble")
+library(tibble)
+
+# Create a students dataset
+students <- tibble(
+  id = 1:30,
+
+  name = c("Emmanuel", "Patrick", "Diane", "Eric", "Claudine",
+           "Samuel", "Alice", "David", "Chantal", "Kevin",
+           "Jean", "Olive", "Sandrine", "Felix", "Esther",
+           "Claude", "Aline", "Joseph", "Grace", "Daniel",
+           "Beatha", "Benjamin", "Ange", "Christian", "Solange",
+           "Fabrice", "Mireille", "Alexis", "Florence", "Theogene"),
+
+  district = rep(c("Gasabo", "Kicukiro", "Nyarugenge",
+                   "Huye", "Musanze", "Rubavu"), times = 5),
+
+  grade = rep(c("S1", "S2", "S3"), each = 10),
+
+  math = c(78, 65, 88, 54, 92, 71, 60, 85, NA, 95,
+           67, 73, 58, 81, 90, 62, 77, 69, 84, 55,
+           72, 64, 93, NA, 86, 79, 68, 91, 59, 75),
+
+  english = c(70, 72, 80, 60, 85, 66, 58, 78, 55, 90,
+              64, 70, 62, 75, 88, 59, 73, NA, 80, 61,
+              69, 60, 87, 52, 79, 74, 71, 84, 63, 77),
+
+  kinyarwanda = c(82, 75, 90, 68, 88, 79, 72, 91, 66, 94,
+                  77, 80, 70, 85, 92, 74, 81, 76, 89, 69,
+                  78, 73, 95, 64, 87, 83, 75, 90, 71, 84),
+
+  tuition = rep(c(50000, 75000, 100000), times = 10),
+
+  date = seq(as.Date("2026-01-12"),
+             by = "week",
+             length.out = 30)
 )
 
-# Display the data
-View(sales.data)
+# Display the students dataset
+View(students)
 
 
-
-# Display 5 frist row of dataset
-head(sales.data, 5)
 
 
 ```
 
 
-```{r, echo=FALSE}
+## Inspect the dataset
 
-
-# Display 5 last row  of dataset
-tail(sales.data, 5)
-
+```{r inspect}
+glimpse(students)
+head(students)
+summary(students)
+colSums(is.na(students))   # NAs per column
 ```
 
-# Importing data from my Database
-```{r, echo=FALSE}
-# Importing data from my Database
-library(DBI) #Provides common database functions
-library(RMariaDB) # this help to transfer data from  database into R for data science.
-library(rstudioapi) #Interacts with the RStudio application, including password prompts
-con <- dbConnect(
-  RMariaDB::MariaDB(),
-  host = "127.0.0.1",
-  port = 3306,
-  username = "root",
-  password = askForPassword("MySQL password"),
-  dbname = "university_db"
+# dplyr: data manipulation
+
+## filter(): choose rows
+
+```{r filter}
+students %>% filter(math >= 80)
+students %>% filter(district == "Gasabo", grade == "S1")
+students %>% filter(district %in% c("Huye", "Musanze"))
+students %>% filter(between(math, 60, 80))
+students %>% filter(is.na(math))
+```
+
+## select(): choose columns
+
+```{r select}
+students %>% select(name, district, math)
+students %>% select(name, math:kinyarwanda)
+students %>% select(-id, -date)
+students %>% select(starts_with("e"))
+students %>% select(where(is.numeric))
+```
+
+## arrange(): sort
+
+```{r arrange}
+students %>% arrange(math)
+students %>% arrange(desc(kinyarwanda))
+students %>% arrange(district, desc(math))
+```
+
+## mutate(): create new columns
+
+```{r mutate}
+students <- students %>%
+  mutate(
+    average = rowMeans(across(math:kinyarwanda), na.rm = TRUE),
+    level = case_when(
+      average >= 85 ~ "Excellent",
+      average >= 70 ~ "Good",
+      average >= 60 ~ "Average",
+      TRUE          ~ "Low"
+    ),
+    passed = if_else(average >= 60, "Yes", "No"),
+    name_upper = str_to_upper(name)
+  )
+
+students
+```
+
+## rename() and relocate()
+
+```{r rename}
+students %>% rename(class = grade)
+students %>% relocate(average, .after = name)
+```
+
+## count(), distinct(), n_distinct()
+
+```{r count}
+students %>% count(district)
+students %>% count(grade, sex)
+students %>% count(level, sort = TRUE)
+students %>% distinct(district)
+n_distinct(students$district)
+```
+
+## group_by() + summarise(): aggregate
+
+```{r summarise}
+students %>%
+  group_by(district) %>%
+  summarise(
+    n = n(),
+    math_avg = mean(math, na.rm = TRUE),
+    max_kinyarwanda = max(kinyarwanda),
+    median_avg = median(average)
+  )
+
+students %>%
+  group_by(grade, sex) %>%
+  summarise(average = mean(average), .groups = "drop")
+```
+
+## across(): apply one function to many columns
+
+```{r across}
+students %>%
+  summarise(across(math:kinyarwanda, ~ mean(.x, na.rm = TRUE)))
+```
+
+## slice_*(): pick specific rows
+
+```{r slice}
+students %>% slice_max(average, n = 5)
+students %>% slice_min(average, n = 5)
+students %>% slice_head(n = 3)
+students %>% slice_sample(n = 3)
+students %>% group_by(district) %>% slice_max(average, n = 1)
+```
+
+## Window functions: rank, lag, cumsum
+
+```{r window}
+students %>%
+  mutate(rank = min_rank(desc(average)),
+         change = average - lag(average),
+         running_total = cumsum(tuition)) %>%
+  select(name, average, rank, change, running_total)
+```
+
+## pull(): extract a column as a vector
+
+```{r pull}
+students %>% pull(math) %>% mean(na.rm = TRUE)
+```
+
+## Joins: combine two tables
+
+```{r joins}
+provinces <- tibble(
+  district = c("Gasabo", "Kicukiro", "Nyarugenge", "Huye", "Musanze", "Rubavu"),
+  province = c("Kigali", "Kigali", "Kigali", "South", "North", "West")
 )
 
-dbListTables(con)
+students %>% left_join(provinces, by = "district")
+students %>% inner_join(provinces, by = "district")
+provinces %>% anti_join(students %>% filter(district == "Huye"), by = "district")
+```
 
-# display data form database
+## bind_rows()
 
-students_list <- DBI::dbGetQuery(
-  con,
-  "SELECT * FROM Students"
-)
+```{r bind}
+new_student <- tibble(id = 31, name = "Kalisa", district = "Huye")
+bind_rows(students %>% select(id, name, district), new_student) %>% tail()
+```
 
-print(students_list)
+# tidyr: reshaping data
 
+## pivot_longer(): wide to long
+
+```{r pivot-longer}
+long_data <- students %>%
+  select(id, name, district, math, english, kinyarwanda) %>%
+  pivot_longer(cols = math:kinyarwanda,
+               names_to = "subject", values_to = "score")
+long_data
+```
+
+## pivot_wider(): long to wide
+
+```{r pivot-wider}
+long_data %>% pivot_wider(names_from = subject, values_from = score)
+
+students %>%
+  group_by(district, grade) %>%
+  summarise(m = mean(math, na.rm = TRUE), .groups = "drop") %>%
+  pivot_wider(names_from = grade, values_from = m)
+```
+
+## Missing values: drop_na(), replace_na()
+
+```{r missing}
+students %>% drop_na(math)
+students %>% drop_na()
+students %>% replace_na(list(math = 0, english = 0))
+```
+
+## unite() and separate()
+
+```{r unite}
+united <- students %>% unite("name_grade", name, grade, sep = "-")
+united %>% select(name_grade)
+united %>% separate(name_grade, into = c("name", "grade"), sep = "-")
+```
+
+## complete(): add missing combinations
+
+```{r complete}
+students %>%
+  count(district, grade) %>%
+  complete(district, grade, fill = list(n = 0))
+```
+
+# lubridate, stringr, forcats, purrr
+
+```{r others}
+# lubridate: dates
+students %>%
+  mutate(month = month(date, label = TRUE),
+         year = year(date),
+         week_no = week(date)) %>%
+  count(month)
+
+# stringr: text
+students %>% filter(str_detect(name, "^U"))   # names starting with U
+students %>% mutate(name_length = str_length(name)) %>% select(name, name_length)
+
+# forcats: factors
+students %>%
+  mutate(district = fct_reorder(district, average)) %>%
+  pull(district) %>%
+  levels()
+
+# purrr: apply a function over columns
+students %>% select(math:kinyarwanda) %>% map_dbl(~ mean(.x, na.rm = TRUE))
+```
+
+# ggplot2: charts
+
+## Scatter plot
+
+```{r scatter}
+ggplot(students, aes(math, kinyarwanda, color = sex)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm", se = FALSE) +
+  labs(title = "Math vs Kinyarwanda", x = "Math", y = "Kinyarwanda") +
+  theme_minimal()
+```
+
+## Bar chart (counts)
+
+```{r bar-counts}
+ggplot(students, aes(district, fill = sex)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Students per district", x = NULL, y = "Count")
+```
+
+## Bar chart (values) + coord_flip
+
+```{r bar-values}
+students %>%
+  group_by(district) %>%
+  summarise(avg = mean(average)) %>%
+  ggplot(aes(fct_reorder(district, avg), avg)) +
+  geom_col(fill = "steelblue") +
+  coord_flip() +
+  labs(x = NULL, y = "Average score")
+```
+
+## Boxplot
+
+```{r boxplot}
+ggplot(students, aes(grade, average, fill = grade)) +
+  geom_boxplot() +
+  theme_classic()
+```
+
+## Histogram and density
+
+```{r hist-density}
+ggplot(students, aes(average)) +
+  geom_histogram(bins = 10, fill = "tomato", color = "white")
+
+ggplot(students, aes(average, fill = sex)) +
+  geom_density(alpha = 0.5)
 ```
 
 
-```{r, echo=FALSE}
-Students1 <- DBI::dbGetQuery(
-  con,
-  "SELECT * FROM Students LIMIT 3"
-)
 
-View(Students1)
+## Facets: one panel per group
+
+```{r facets}
+ggplot(students, aes(math, english)) +
+  geom_point() +
+  facet_wrap(~ district)
+```
+
+## Heatmap
+
+```{r heatmap}
+students %>%
+  group_by(district, grade) %>%
+  summarise(avg = mean(average), .groups = "drop") %>%
+  ggplot(aes(grade, district, fill = avg)) +
+  geom_tile() +
+  geom_text(aes(label = round(avg, 1)), color = "white") +
+  scale_fill_viridis_c()
+```
+
+## Scores by subject (long data)
+
+```{r subject-box}
+ggplot(long_data, aes(subject, score, fill = subject)) +
+  geom_boxplot(na.rm = TRUE) +
+  theme_bw() +
+  theme(legend.position = "none")
+```
+
+## Save a plot
+
+```{r ggsave, eval=FALSE}
+# eval = FALSE: change to TRUE if you want to save the file when knitting
+ggsave("plot.png", width = 7, height = 5, dpi = 300)
+```
+
+# Full pipeline: dplyr, tidyr, ggplot2
+
+```{r pipeline}
+students %>%
+  pivot_longer(math:kinyarwanda, names_to = "subject", values_to = "score") %>%
+  drop_na(score) %>%
+  group_by(grade, subject) %>%
+  summarise(avg = mean(score), .groups = "drop") %>%
+  ggplot(aes(grade, avg, fill = subject)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average score by grade and subject",
+       x = "Grade", y = "Average", fill = "Subject") +
+  theme_minimal()
 ```
 
 
+##Conditional statements
+Conditional statements allow R to make decisions based on student information.
+## A. if statement
 
-
+if (students$math[1] >= 50) {
+  print("PASS")
+} else {
+  print("FAIL")
+}
