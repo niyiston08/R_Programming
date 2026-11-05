@@ -38,7 +38,7 @@ my_summary_stats(data)
 
 
 ```
-#This is to explaining the purpose of the function :Function to calculate two-sample t-test 
+#Function to calculate two-sample t-test 
 
 ```{r}
 
