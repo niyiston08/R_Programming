@@ -1,0 +1,114 @@
+---
+title: "Simple ggplot2 Geom Variations"
+author: "R Practice"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+
+#The ggplot2 package helps us create graphs in R.
+
+A `geom` tells R what type of graph to draw.
+
+```{r}
+library(ggplot2)
+```
+
+We will use the `mtcars` dataset.( it is a build in dataset)
+
+
+## geom_point() – Scatter plot
+
+Shows the relationship between two variables.
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point()
+```
+
+## geom_line() – Line graph
+
+Shows changes or trends, especially over time.
+
+```{r}
+ggplot(economics, aes(x = date, y = unemploy)) +
+  geom_line()
+```
+
+##geom_bar() – Bar chart
+
+Counts how many items are in each group.
+
+```{r}
+ggplot(mtcars, aes(x = factor(cyl))) +
+  geom_bar()
+```
+
+## geom_col() – Column chart
+
+Shows numbers that we already have.
+
+```{r}
+sales <- data.frame(
+  product = c("Books", "Phones", "Computers"),
+  amount = c(30, 45, 25)
+)
+
+ggplot(sales, aes(x = product, y = amount)) +
+  geom_col()
+```
+
+#Here not that geom_bar()` is for counts; `geom_col()` uses given numbers.
+
+#geom_histogram() – this is used for Histogram ,Shows how numerical values are distributed.
+
+```{r}
+ggplot(mtcars, aes(x = mpg)) +
+  geom_histogram(bins = 10)
+```
+
+## geom_boxplot() – Boxplot
+
+Compares values between groups.
+
+```{r}
+ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
+  geom_boxplot()
+```
+
+## geom_density() – Density plot
+
+#Shows the shape of a data distribution.
+
+```{r}
+ggplot(mtcars, aes(x = mpg)) +
+  geom_density()
+```
+
+## geom_smooth() – Trend line
+
+#Shows the general relationship or trend between two variables.
+
+```{r}
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+##geom_violin() – Violin plot
+
+Shows the distribution of values in different groups.
+
+```{r}
+ggplot(mtcars, aes(x = factor(cyl), y = mpg)) +
+  geom_violin()
+```
+
+## geom_area() – Area graph
+
+Shows a trend with the area under the line filled.
+
+```{r}
+ggplot(economics, aes(x = date, y = unemploy)) +
+  geom_area()
+```
