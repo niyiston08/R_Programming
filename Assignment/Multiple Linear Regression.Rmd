@@ -1,0 +1,151 @@
+---
+title: "Multiple Linear Regression."
+author: "Fiston Niyigena"
+date: "`r Sys.Date()`"
+output: html_document
+---
+# Load the dataset
+
+```{r}
+
+data(mtcars)
+
+# Display the first six observations
+head(mtcars)
+```
+
+# Data Exploration
+
+```{r}
+# Check data structure
+str(mtcars)
+
+# Select relevant variables
+data <- mtcars[, c("mpg", "wt", "hp")]
+
+# Summary statistics
+summary(data)
+
+# Check missing values
+colSums(is.na(data))
+```
+
+# Data Visualization
+
+```{r}
+# Relationship between weight and fuel efficiency
+plot(data$wt, data$mpg,
+     main = "Weight vs Fuel Efficiency",
+     xlab = "Weight",
+     ylab = "Miles per Gallon",
+     pch = 19)
+
+# Relationship between horsepower and fuel efficiency
+plot(data$hp, data$mpg,
+     main = "Horsepower vs Fuel Efficiency",
+     xlab = "Horsepower",
+     ylab = "Miles per Gallon",
+     pch = 19)
+```
+
+# Multiple Linear Regression Model
+
+The regression model is:
+
+MPG = β0 + β1(WT) + β2(HP) + ε
+
+```{r}
+# Fit the regression model
+model <- lm(mpg ~ wt + hp, data = data)
+
+# Display regression results
+summary(model)
+```
+
+# Interpretation of Results
+
+```{r}
+# Extract regression coefficients
+coef(model)
+
+# Display R-squared
+summary(model)$r.squared
+
+# Display adjusted R-squared
+summary(model)$adj.r.squared
+
+# Display F-statistic and p-value
+summary(model)$fstatistic
+```
+
+The regression equation is approximately:
+
+MPG = 37.227 - 3.878(WT) - 0.032(HP)
+
+Interpretation of Results
+
+- Intercept (37.227): Expected fuel efficiency when weight and horsepower are zero.
+- Weight (-3.878): Increasing weight by 1,000 pounds reduces fuel efficiency by 3.878 MPG.
+- Horsepower (-0.032): Increasing horsepower by one unit reduces fuel efficiency by 0.032 MPG.
+- R-squared (82.68%): Weight and horsepower explain 82.68% of the changes in fuel efficiency.
+
+#Regression Diagnostics
+
+Regression diagnostics help assess whether the assumptions of multiple linear regression are satisfied.
+
+```{r}
+# Display diagnostic plots
+par(mfrow = c(2, 2))
+plot(model)
+par(mfrow = c(1, 1))
+```
+
+#Normality Test
+
+```{r}
+# Shapiro-Wilk normality test
+shapiro.test(residuals(model))
+```
+
+Interpretation:
+
+If the p-value is greater than 0.05, there is insufficient evidence to reject the assumption of normally distributed residuals.
+
+# Multicollinearity Test
+
+```{r}
+# Correlation between independent variables
+cor(data$wt, data$hp)
+```
+
+A high correlation may indicate multicollinearity between the independent variables.
+
+# Homoscedasticity Test
+
+```{r}
+
+library(lmtest)
+
+# Breusch-Pagan test
+bptest(model)
+```
+
+Interpretation:
+
+- p-value greater than 0.05: No significant evidence of heteroscedasticity.
+- p-value less than 0.05: Evidence of heteroscedasticity.
+
+# Prediction
+
+```{r}
+# Predict fuel efficiency for a vehicle
+new_car <- data.frame(wt = 3.0, hp = 120)
+
+predict(model, newdata = new_car)
+```
+
+This predicts fuel efficiency for a vehicle weighing 3,000 pounds and having 120 horsepower.
+
+#Conclusion
+
+The results show that heavier cars and cars with higher horsepower use more fuel. Our model explains 82.68% of the differences in fuel efficiency. This shows that multiple linear regression helps us understand how several factors affect one outcome.
