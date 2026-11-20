@@ -1,0 +1,421 @@
+---
+title: "Final Exam R For Data Science"
+author: "20252MBI041_Fiston_Niyigena_R"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+
+---
+
+### Importing Data set, as the data set and R markdown are save in the same folder no need of put full location of file
+
+```{r setup, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(scales)
+
+data <- read.csv("20252MBI041_R_For_Data_Science_Exam.csv")
+```
+
+### Data inspection and cleaning (Variable names, first five and last ten rows)
+
+```{r}
+names(data)
+head(data, 5)
+tail(data, 10)
+```
+### Data types and dataset shape
+
+```{r}
+str(data)
+dim(data)                 # number of rows and columns
+nrow(data)                # rows/observations
+ncol(data)                # columns/variables
+```
+
+### Remove duplicate rows
+
+```{r}
+sum(duplicated(data))
+data <- data %>% distinct()
+dim(data)
+```
+
+### Missing values by column
+```{r}
+# Display missing values in each column
+colSums(is.na(data))
+```
+If  missing values found, will be replaced. For numeric variables, we use the median, and for categorical variables, we use the most common value. If there are no missing values, no replacement is needed.
+
+```{r}
+# Replace missing values in numeric columns with the median
+data <- data %>%
+  mutate(across(where(is.numeric),
+                ~ ifelse(is.na(.x), median(.x, na.rm = TRUE), .x)))
+
+# Replace missing values in categorical columns with the most common value
+mode_value <- function(x) {
+  ux <- unique(x[!is.na(x)])
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+data <- data %>%
+  mutate(across(where(is.character),
+                ~ ifelse(is.na(.x), mode_value(.x), .x)))
+
+# Display missing values after replacement
+colSums(is.na(data))
+```
+
+### Boxplots to check quantitative-variable outliers
+
+```{r}
+# Select numeric variables
+numeric_data <- data[, sapply(data, is.numeric)]
+
+# Define different colors
+box_colors <- c("yellow", "green", "blue", "orange",
+                "red", "purple", "pink", "brown", "cyan")
+
+# Display boxplots
+par(mfrow = c(3, 3),
+    mar = c(3, 3, 3, 1),
+    cex = 0.9)
+
+for (i in 1:ncol(numeric_data)) {
+  boxplot(numeric_data[, i],
+          main = names(numeric_data)[i],
+          col = box_colors[i],
+          border = "black",
+          horizontal = FALSE,
+          ylab = names(numeric_data)[i],
+          cex.main = 1,
+          cex.lab = 0.9,
+          cex.axis = 0.8)
+}
+
+# Reset the graph layout
+par(mfrow = c(1, 1),
+    mar = c(5, 4, 4, 2),
+    cex = 1)
+```
+
+### Summaries and graphs
+
+```{r}
+# Count observations for each continent
+continent_count <- table(data$continent)
+
+# Make space for the legend
+par(mar = c(5, 4, 4, 8))
+
+# Draw the bar chart
+barplot(continent_count,
+        main = "Observations by Continent",
+        xlab = "Continent",
+        ylab = "Number of Observations",
+        col = c("yellow", "blue", "green", "orange", "red", "black"),
+        border = "Red")
+
+# Add legend on the right
+legend("topright",
+       inset = c(-0.30, 0),
+       legend = names(continent_count),
+       fill = c("yellow", "blue", "green", "orange", "red", "purple"),
+       title = "Legend",
+       xpd = TRUE,
+       cex = 0.7)
+
+# Add a single-line frame around the graph
+box()
+
+# Restore margins
+par(mar = c(5, 4, 4, 4))
+
+```
+
+### Observations by year
+
+```{r}
+
+# Count observations for each year
+year_count <- table(data$Year)
+year_count
+
+# Display total observations
+sum(year_count)
+
+# Check whether observations are equal across years
+year_count == 132
+
+
+```
+```{r}
+
+# Count observations for each year
+table(data$Year)
+
+# Draw a bar chart
+barplot(table(data$Year),
+        main = "Observations by Year",
+        xlab = "Year",
+        ylab = "Number of Observations",
+        col = colorRampPalette(c("lightblue", "darkblue"))(6),
+        border = "red")
+```
+
+#### The bars are approximately equal in height, it means the dataset contains a similar number of observations for each year.
+
+### Happiness-score summary and distribution
+
+```{r}
+# Summary of happiness scores
+summary(data$happiness_score)
+
+# Draw a histogram
+hist(data$happiness_score,
+     main = "Happiness Scores",
+     xlab = "Happiness Score",
+     ylab = "Frequency",
+     col = c("yellow", "green", "blue", "orange", "red", "purple", "pink", "brown"),
+     border = "black")
+
+```
+
+### CPI-score summary and distribution
+
+```{r}
+# Summary of CPI scores
+summary(data$cpi_score)
+
+# Draw a histogram
+hist(data$cpi_score,
+     main = "CPI Scores",
+     xlab = "CPI Score (Higher = Less Corruption)",
+     ylab = "Frequency",
+     col = c("yellow", "green", "blue", "orange", "red", "purple", "pink", "brown"),
+     border = "black")
+```
+### GDP per capita summary and distribution
+
+```{r}
+# Summary of GDP per capita
+summary(data$gdp_per_capita)
+
+# Draw a histogram
+hist(data$gdp_per_capita,
+     main = "Distribution of GDP per Capita",
+     xlab = "GDP per Capita",
+     ylab = "Frequency",
+     col = c("yellow", "green", "blue", "orange", "red", "purple", "pink", "brown"),
+     border = "black")
+```
+### Fill in the exam statement using calculations
+
+```{r}
+# Percentage of observations from Europe
+europe_percent <- sum(data$continent == "Europe") / nrow(data) * 100
+
+# Count observations with CPI score of 50 or above
+cpi_50_count <- sum(data$cpi_score >= 50)
+
+# Average happiness in Europe
+europe_mean <- mean(data$happiness_score[data$continent == "Europe"])
+
+# Average happiness in Africa
+africa_mean <- mean(data$happiness_score[data$continent == "Africa"])
+
+# Compare Europe's happiness with Africa's
+europe_africa_ratio <- europe_mean / africa_mean
+
+# Average happiness in 2015
+mean_2015 <- mean(data$happiness_score[data$Year == 2015])
+
+# Average happiness in 2020
+mean_2020 <- mean(data$happiness_score[data$Year == 2020])
+
+# Display results
+europe_percent
+cpi_50_count
+europe_mean
+africa_mean
+europe_africa_ratio
+mean_2015
+mean_2020
+```
+### Missing information in the statement:
+The EDA shows that `r round(europe_percent, 2)`% of observations come from European countries. Moreover, `r cpi_50_count` out of all country-year observations have a CPI score of 50 or above. In addition, the average happiness score of Europe is `r round(europe_africa_ratio, 2)` times the average happiness score of Africa. Generally, the global average happiness score moved from `r round(mean_2015, 3)` in 2015 to `r round(mean_2020, 3)` in 2020.
+
+### Happiness over time
+
+```{r}
+# Average happiness by year
+year_happiness <- tapply(data$happiness_score, data$Year, mean)
+
+# Display results
+year_happiness
+
+# Draw a line graph
+plot(year_happiness,
+     type = "b",
+     main = "Average Happiness by Year",
+     xlab = "Year",
+     ylab = "Average Happiness Score",
+     col = "Red")
+```
+
+### Happiness by CPI intervals (10-point groups)
+
+```{r}
+# Divide CPI scores into groups of 10
+data$cpi_group <- cut(data$cpi_score,
+                     breaks = seq(0, 100, 10),
+                     labels = c("0-9", "10-19", "20-29", "30-39",
+                                "40-49", "50-59", "60-69", "70-79",
+                                "80-89", "90-99"),
+                     right = FALSE)
+
+# Calculate average happiness for each CPI group
+tapply(data$happiness_score, data$cpi_group, mean)
+
+# Define colors
+cpi_colors <- c("yellow", "green", "blue", "orange", "red",
+                "purple", "pink", "brown", "gray", "cyan")
+
+# Draw boxplots
+boxplot(happiness_score ~ cpi_group,
+        data = data,
+        main = "Happiness by CPI Group",
+        xlab = "CPI Group",
+        ylab = "Happiness Score",
+        col = cpi_colors,
+        las = 2)
+
+# Add legend
+legend("topright",
+       legend = levels(data$cpi_group),
+       fill = cpi_colors,
+       title = "CPI Groups",
+       cex = 0.7)
+```
+
+### CPI and happiness: scatter plot and correlation
+
+```{r}
+
+# Draw a scatter plot
+plot(data$cpi_score, data$happiness_score,
+     main = "CPI Score and Happiness",
+     xlab = "CPI Score (Higher = Less Corruption)",
+     ylab = "Happiness Score",
+     pch = 19,
+     col = "blue")
+
+# Add a regression line
+abline(lm(happiness_score ~ cpi_score, data = data),
+       col = "red",
+       lwd = 2)
+
+# Calculate correlation
+cor(data$cpi_score, data$happiness_score)
+
+```
+
+The correlation coefficient ranges from -1 to +1. A positive correlation means that higher CPI scores are generally associated with higher happiness scores. However, correlation does not mean causation.
+
+### Strongly correlated with happiness?
+
+```{r}
+# Happiness determinants
+determinants <- c("gdp_per_capita", "family", "health",
+                  "freedom", "generosity", "government_trust")
+
+# Calculate correlation with happiness
+correlations <- numeric(length(determinants))
+
+for (i in 1:length(determinants)) {
+  correlations[i] <- cor(data[[determinants[i]]],
+                         data$happiness_score)
+}
+
+# Display correlations
+correlations
+names(correlations) <- determinants
+
+# Sort from highest to lowest
+sort(correlations, decreasing = TRUE)
+
+# Find the most correlated determinant
+determinants[which.max(correlations)]
+
+```
+
+### Identifying low happiness level
+
+```{r}
+# Select African countries with CPI scores below 30
+low_group <- data[data$continent == "Africa" & data$cpi_score < 30, ]
+
+# List the countries in this group
+unique(low_group$Country)
+
+# Count observations in the group
+nrow(low_group)
+
+# Calculate average happiness of the group
+group_mean <- mean(low_group$happiness_score)
+
+# Calculate global average happiness
+global_mean <- mean(data$happiness_score)
+
+# Display the averages
+group_mean
+global_mean
+
+# Compare the group with the global average
+group_mean - global_mean
+
+```
+
+```{r}
+# Calculate average happiness for each country
+country_mean <- tapply(data$happiness_score, data$Country, mean)
+
+# Sort countries from lowest to highest happiness
+sort(country_mean)
+```
+
+```{r}
+hist(low_group$happiness_score,
+     main = "Happiness in African Countries with CPI Below 30",
+     xlab = "Happiness Score",
+     ylab = "Count",
+     col = c("yellow", "green", "blue", "orange", "red", "purple", "pink", "brown"),
+     breaks = 15)
+```
+
+Compare the group's average happiness with the global average. If the group's average is lower, it means they are less happy on average than the overall population. However, this does not mean that CPI causes the difference
+
+### Five Practical Recommendations for Policymakers
+
+1. Improve the economy: Create jobs, support businesses and improve people's skills to     increase income and living standards.
+
+2. Fight corruption: Promote transparency, accountability and better public services to build trust in government.
+
+3. Improve healthcare: Provide better healthcare services, mental-health support and healthy living conditions.
+
+4. Strengthen social support: Encourage community support, reduce inequality and help vulnerable people.
+
+5. Protect freedom: Promote citizens' rights, participation in decision-making and freedom to make personal choices.
+
+### Conclusion
+
+This analysis examines happiness across countries and over time, and how it relates to CPI and other factors. The results can help policymakers identify areas for improvement, but correlations do not prove causation.
+
+
+
+<small><i>
+Acknowledgement of Lecture and AI Assistance
+
+I acknowledge that my lecture class activities were my main reference throughout this exam. I also used an AI tool to assist with selecting graph colors and understanding some parts of the R code. The AI assistance accounted for less than 10% of my overall work. The analysis, interpretation, and completion of the exam were primarily my own work, based mainly on the lecture class activities.
+</i></small>
