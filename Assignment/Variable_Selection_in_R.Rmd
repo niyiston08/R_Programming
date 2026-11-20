@@ -1,0 +1,125 @@
+---
+title: "Variable Selection in R"
+author: "Fiston Niyigena"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+Variable selection is the process of choosing the most useful independent variables (predictors) to include in a model to explain or predict the dependent variable.
+
+
+### Load and Explore the Dataset
+
+```{r}
+data(mtcars)
+
+head(mtcars)
+str(mtcars)
+```
+
+###  Build a Full Regression Model
+
+A full model includes the candidate predictors we wish to consider.
+
+```{r}
+model_full <- lm(mpg ~ wt + hp + disp + cyl + drat +
+                   qsec + gear + carb + vs + am,
+                 data = mtcars)
+
+summary(model_full)
+```
+
+### Variable Selection Using P-values
+
+The p-value helps us determine whether an independent variable is statistically significant in a regression model.
+
+- p-value below 0.05: The variable is statistically significant.
+- p-value above 0.05: The variable is not statistically significant at the 5% level.
+However, variables should not be removed based only on their p-values; other factors, such as their importance and the model's performance, should also be considered.
+
+```{r}
+summary(model_full)$coefficients
+```
+
+### Variable Selection Using Stepwise Regression
+
+The `step()` function in R can perform stepwise model selection using AIC (Akaike Information Criterion) by default.
+
+### Both-direction selection
+
+```{r}
+model_selected <- step(model_full, direction = "both")
+```
+
+- `direction = "backward"`: starts with the full model and considers removing predictors.
+- `direction = "forward"`: starts with a simpler model and considers adding predictors.
+- `direction = "both"`: considers adding or removing predictors during the search.
+
+### View the selected model
+
+```{r}
+summary(model_selected)
+```
+
+### Display the selected formula
+
+```{r}
+formula(model_selected)
+```
+
+### Compare the Full and Selected Models
+
+```{r}
+AIC(model_full, model_selected)
+```
+
+AIC (Akaike Information Criterion) helps compare statistical models by considering how well they fit the data and how simple they are. A lower AIC generally indicates a better model among the models being compared.
+
+### Visualize the Selected Model Diagnostics
+
+```{r}
+par(mfrow = c(2, 2))
+plot(model_selected)
+par(mfrow = c(1, 1))
+```
+
+
+
+
+
+
+### Complete R Code
+
+```{r}
+# Load the dataset
+data(mtcars)
+
+# Build the full model
+model_full <- lm(mpg ~ wt + hp + disp + cyl + drat +
+                   qsec + gear + carb + vs + am,
+                 data = mtcars)
+
+# Inspect the full model
+summary(model_full)
+
+# Perform stepwise selection in both directions
+model_selected <- step(model_full, direction = "both")
+
+# Inspect the selected model
+summary(model_selected)
+
+# Display the selected formula
+formula(model_selected)
+
+# Compare models using AIC
+AIC(model_full, model_selected)
+
+# Plot diagnostic graphs
+par(mfrow = c(2, 2))
+plot(model_selected)
+par(mfrow = c(1, 1))
+```
+
+### Conclusion
+
+Variable selection helps choose the most useful predictors for a regression model. The step() function uses AIC to select a model that balances accuracy and simplicity. The final model should also be checked using diagnostic plots and other statistical methods.
